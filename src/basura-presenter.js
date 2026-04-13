@@ -2,19 +2,26 @@ import {
     registrarZona,
     registrarHorario,
     obtenerZonas,
-    obtenerHorarios
-} from '../model/basura-model.js';
+    obtenerHorarios,
+    verHorariosPorZona,
+    verZonasDisponibles
+} from './basura-model.js';
 
 import {
     obtenerElementosVista,
     obtenerDatosZona,
     obtenerDatosHorario,
+    obtenerZonaConsulta,
     mostrarMensaje,
     limpiarFormularioZona,
     limpiarFormularioHorario,
     actualizarSelectZonas,
-    renderizarRutas
-} from '../view/basura-view.js';
+    renderizarRutas,
+    renderizarHorariosCiudadano,
+    renderizarZonasCiudadano,
+    limpiarVistaHorariosCiudadano,
+    limpiarVistaZonasCiudadano
+} from './basura-view.js';
 
 const elementos = obtenerElementosVista();
 
@@ -52,6 +59,33 @@ elementos.formHorario.addEventListener('submit', function (e) {
     mostrarMensaje(elementos.msgHorario, resultado.mensaje, "green");
     limpiarFormularioHorario();
     renderizarRutas(obtenerHorarios(), obtenerZonas());
+});
+
+elementos.btnVerHorarios.addEventListener('click', function () {
+    const zonaSeleccionada = obtenerZonaConsulta();
+    const resultado = verHorariosPorZona(zonaSeleccionada);
+
+    limpiarVistaHorariosCiudadano();
+
+    if (!resultado.exito) {
+        mostrarMensaje(elementos.msgConsultaHorario, resultado.mensaje, "red");
+        return;
+    }
+
+    renderizarHorariosCiudadano(resultado.datos);
+});
+
+elementos.btnVerZonas.addEventListener('click', function () {
+    const resultado = verZonasDisponibles();
+
+    limpiarVistaZonasCiudadano();
+
+    if (!resultado.exito) {
+        mostrarMensaje(elementos.msgVerZonas, resultado.mensaje, "red");
+        return;
+    }
+
+    renderizarZonasCiudadano(resultado.datos);
 });
 
 actualizarSelectZonas(obtenerZonas());
