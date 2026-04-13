@@ -6,6 +6,15 @@ const formHorario = document.getElementById('form-horario');
 const msgHorario = document.getElementById('mensaje-horario');
 const listaRutas = document.getElementById('lista-rutas');
 
+const selectConsultaZona = document.getElementById('consulta-zona');
+const btnVerHorarios = document.getElementById('btn-ver-horarios');
+const msgConsultaHorario = document.getElementById('mensaje-consulta-horario');
+const listaHorariosCiudadano = document.getElementById('lista-horarios-ciudadano');
+
+const btnVerZonas = document.getElementById('btn-ver-zonas');
+const msgVerZonas = document.getElementById('mensaje-ver-zonas');
+const listaZonasCiudadano = document.getElementById('lista-zonas-ciudadano');
+
 export function obtenerElementosVista() {
     return {
         formZona,
@@ -13,7 +22,14 @@ export function obtenerElementosVista() {
         selectZona,
         formHorario,
         msgHorario,
-        listaRutas
+        listaRutas,
+        selectConsultaZona,
+        btnVerHorarios,
+        msgConsultaHorario,
+        listaHorariosCiudadano,
+        btnVerZonas,
+        msgVerZonas,
+        listaZonasCiudadano
     };
 }
 
@@ -32,13 +48,13 @@ export function obtenerDatosHorario() {
     };
 }
 
+export function obtenerZonaConsulta() {
+    return selectConsultaZona.value;
+}
+
 export function mostrarMensaje(elemento, texto, color) {
     elemento.textContent = texto;
     elemento.style.color = color;
-
-    setTimeout(function () {
-        elemento.textContent = "";
-    }, 3000);
 }
 
 export function limpiarFormularioZona() {
@@ -50,18 +66,35 @@ export function limpiarFormularioHorario() {
 }
 
 export function actualizarSelectZonas(zonas) {
+    selectZona.innerHTML = '';
+    selectConsultaZona.innerHTML = '';
+
     if (zonas.length === 0) {
         selectZona.innerHTML = '<option value="">-- Primero registre una zona --</option>';
+        selectConsultaZona.innerHTML = '<option value="">-- No hay zonas disponibles --</option>';
         return;
     }
 
-    selectZona.innerHTML = '<option value="">-- Seleccione una zona --</option>';
+    const optionAdminInicial = document.createElement('option');
+    optionAdminInicial.value = '';
+    optionAdminInicial.textContent = '-- Seleccione una zona --';
+    selectZona.appendChild(optionAdminInicial);
+
+    const optionCiudadanoInicial = document.createElement('option');
+    optionCiudadanoInicial.value = '';
+    optionCiudadanoInicial.textContent = '-- Seleccione una zona --';
+    selectConsultaZona.appendChild(optionCiudadanoInicial);
 
     for (let i = 0; i < zonas.length; i++) {
-        const option = document.createElement('option');
-        option.value = zonas[i].nombre;
-        option.textContent = zonas[i].nombre;
-        selectZona.appendChild(option);
+        const optionAdmin = document.createElement('option');
+        optionAdmin.value = zonas[i].nombre;
+        optionAdmin.textContent = zonas[i].nombre;
+        selectZona.appendChild(optionAdmin);
+
+        const optionCiudadano = document.createElement('option');
+        optionCiudadano.value = zonas[i].nombre;
+        optionCiudadano.textContent = zonas[i].nombre;
+        selectConsultaZona.appendChild(optionCiudadano);
     }
 }
 
@@ -90,4 +123,45 @@ export function renderizarRutas(horarios, zonas) {
 
         listaRutas.appendChild(div);
     }
+}
+
+export function renderizarHorariosCiudadano(horariosZona) {
+    listaHorariosCiudadano.innerHTML = '';
+
+    for (let i = 0; i < horariosZona.length; i++) {
+        const horario = horariosZona[i];
+
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML =
+            '<h3 style="color: #764ba2; margin-bottom: 5px;">🕒 ' + horario.zona + '</h3>' +
+            '<p><strong>Días:</strong> ' + horario.dias + '</p>' +
+            '<p><strong>Hora aprox:</strong> ' + horario.hora + '</p>';
+
+        listaHorariosCiudadano.appendChild(div);
+    }
+}
+
+export function renderizarZonasCiudadano(zonas) {
+    listaZonasCiudadano.innerHTML = '';
+
+    for (let i = 0; i < zonas.length; i++) {
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML =
+            '<h3 style="color: #764ba2; margin-bottom: 5px;">📍 ' + zonas[i].nombre + '</h3>' +
+            '<p><strong>Barrios:</strong> ' + zonas[i].barrios + '</p>';
+
+        listaZonasCiudadano.appendChild(div);
+    }
+}
+
+export function limpiarVistaHorariosCiudadano() {
+    listaHorariosCiudadano.innerHTML = '';
+    msgConsultaHorario.textContent = '';
+}
+
+export function limpiarVistaZonasCiudadano() {
+    listaZonasCiudadano.innerHTML = '';
+    msgVerZonas.textContent = '';
 }
