@@ -53,3 +53,52 @@ function actualizarSelectZonas() {
         selectZona.appendChild(option);
     });
 }
+// --- Lógica para SP1.3: Registrar Horarios ---
+const formHorario = document.getElementById('form-horario');
+const msgHorario = document.getElementById('mensaje-horario');
+const listaRutas = document.getElementById('lista-rutas');
+
+formHorario.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const zonaSeleccionada = document.getElementById('horario-zona').value;
+    const dias = document.getElementById('horario-dias').value.trim();
+    const hora = document.getElementById('horario-hora').value;
+
+    // Criterio de confirmación: Validar campos
+    if (!zonaSeleccionada || !dias || !hora) {
+        mostrarMensaje(msgHorario, "Por favor, complete todos los campos", "red");
+        return;
+    }
+
+    // Guardar horario
+    horarios.push({ zona: zonaSeleccionada, dias, hora });
+    mostrarMensaje(msgHorario, "Horario registrado exitosamente.", "green");
+    formHorario.reset();
+    
+    renderizarRutas();
+});
+
+// Criterio de confirmación: Observarse en la aplicación
+function renderizarRutas() {
+    if (horarios.length === 0) {
+        listaRutas.innerHTML = '<p style="color: #666;">No hay rutas registradas aún.</p>';
+        return;
+    }
+
+    listaRutas.innerHTML = '';
+    
+    // Combinar datos de zonas y horarios para mostrar
+    horarios.forEach(horario => {
+        const infoZona = zonas.find(z => z.nombre === horario.zona);
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `
+            <h3 style="color: #764ba2; margin-bottom: 5px;">📍 ${horario.zona}</h3>
+            <p><strong>Barrios:</strong> ${infoZona.barrios}</p>
+            <p><strong>Días:</strong> ${horario.dias}</p>
+            <p><strong>Hora aprox:</strong> ${horario.hora}</p>
+        `;
+        listaRutas.appendChild(div);
+    });
+}
