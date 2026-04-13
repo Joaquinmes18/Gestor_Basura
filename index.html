@@ -5,127 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestor de Basura</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* Estilos base (tus estilos originales + ajustes para formularios) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
+            padding: 40px 20px;
         }
-
         .container {
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 60px 40px;
-            text-align: center;
-            max-width: 600px;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
         }
-
-        h1 {
+        h1, h2 {
             color: #333;
-            font-size: 2.5em;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
-
-        p {
-            color: #666;
-            font-size: 1.2em;
-            margin-bottom: 30px;
-            line-height: 1.6;
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; color: #666; font-weight: bold;}
+        input[type="text"], input[type="time"], select {
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em;
         }
-
-        .emoji {
-            font-size: 4em;
-            margin-bottom: 20px;
-            display: block;
-        }
-
         button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1em;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            margin: 10px 5px;
+            color: white; border: none; padding: 12px 25px; font-size: 1em;
+            border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px;
         }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .features {
-            margin-top: 40px;
-            text-align: left;
-        }
-
-        .features h3 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .features ul {
-            list-style: none;
-            color: #666;
-        }
-
-        .features li {
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .features li:before {
-            content: "✓ ";
-            color: #667eea;
-            font-weight: bold;
-            margin-right: 10px;
-        }
+        .mensaje { margin-top: 10px; font-weight: bold; font-size: 0.9em; min-height: 20px; }
+        .list-container { margin-top: 20px; text-align: left; }
+        .list-item { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 10px; border-left: 4px solid #667eea; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 30px 0; }
     </style>
 </head>
 <body>
     <div class="container">
-        <span class="emoji">♻️</span>
-        <h1>¡Hola Gestor de Basura!</h1>
-        <p>Bienvenido al Sistema de Gestión de Residuos</p>
-        
-        <div class="features">
-            <h3>Características:</h3>
-            <ul>
-                <li>Gestión integral de residuos</li>
-                <li>Reportes y estadísticas</li>
-                <li>Sistema de categorización</li>
-                <li>Seguimiento ambiental</li>
-            </ul>
-        </div>
+        <h1>♻️ Panel de Administración - EMSA</h1>
 
-        <div style="margin-top: 30px;">
-            <button onclick="alert('¡Gestor de Basura activo!')">Activar Sistema</button>
-            <button onclick="mostrarMensaje()">Ver Mensaje</button>
+        <h2>1. Registrar Zona de Recolección</h2>
+        <form id="form-zona">
+            <div class="form-group">
+                <label for="zona-nombre">Nombre de la Zona *</label>
+                <input type="text" id="zona-nombre" placeholder="Ej. Ruta Norte">
+            </div>
+            <div class="form-group">
+                <label for="zona-barrios">Barrios *</label>
+                <input type="text" id="zona-barrios" placeholder="Ej. Cala Cala, Queru Queru">
+            </div>
+            <button type="submit">Guardar Zona</button>
+            <div id="mensaje-zona" class="mensaje"></div>
+        </form>
+
+        <hr>
+
+        <h2>2. Registrar Horarios</h2>
+        <form id="form-horario">
+            <div class="form-group">
+                <label for="horario-zona">Seleccionar Zona *</label>
+                <select id="horario-zona">
+                    <option value="">-- Primero registre una zona --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="horario-dias">Días de Recolección *</label>
+                <input type="text" id="horario-dias" placeholder="Ej. Lunes, Miércoles y Viernes">
+            </div>
+            <div class="form-group">
+                <label for="horario-hora">Hora aproximada *</label>
+                <input type="time" id="horario-hora">
+            </div>
+            <button type="submit">Guardar Horario</button>
+            <div id="mensaje-horario" class="mensaje"></div>
+        </form>
+
+        <hr>
+
+        <h2>Vista Ciudadano: Rutas Activas</h2>
+        <div id="lista-rutas" class="list-container">
+            <p style="color: #666;">No hay rutas registradas aún.</p>
         </div>
     </div>
 
-    <script>
-        function mostrarMensaje() {
-            alert("Sistema de Gestión de Residuos - En desarrollo...");
-        }
-
-        console.log("¡Hola Gestor de Basura!");
-        console.log("Bienvenido al Sistema de Gestión de Residuos");
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
