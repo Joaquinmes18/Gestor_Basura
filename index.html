@@ -96,48 +96,67 @@
         }
     </style>
 </head>
+
 <body>
+    <div id="section-login" class="container" style="margin-bottom: 20px;">
+        <h1>🔐 Iniciar Sesión</h1>
+        <form id="form-login">
+            <div class="form-group">
+                <label for="login-user">Usuario</label>
+                <input type="text" id="login-user" placeholder="Ingrese su usuario">
+            </div>
+            <div class="form-group">
+                <label for="login-pass">Contraseña</label>
+                <input type="password" id="login-pass" placeholder="********" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+            <button type="submit">Ingresar</button>
+            <div id="mensaje-login" class="mensaje"></div>
+        </form>
+    </div>
+
+    <div id="section-admin" style="display: none;">
+        <div class="container" style="margin-bottom: 20px;">
+            <h1>♻️ Panel de Administración - EMSA</h1>
+
+            <h2>1. Registrar Zona de Recolección</h2>
+            <form id="form-zona">
+                <div class="form-group">
+                    <label for="zona-nombre">Nombre de la Zona *</label>
+                    <input type="text" id="zona-nombre" placeholder="Ej. Ruta Norte">
+                </div>
+                <div class="form-group">
+                    <label for="zona-barrios">Barrios *</label>
+                    <input type="text" id="zona-barrios" placeholder="Ej. Cala Cala, Queru Queru">
+                </div>
+                <button type="submit">Guardar Zona</button>
+                <div id="mensaje-zona" class="mensaje"></div>
+            </form>
+
+            <hr>
+
+            <h2>2. Registrar Horarios</h2>
+            <form id="form-horario">
+                <div class="form-group">
+                    <label for="horario-zona">Seleccionar Zona *</label>
+                    <select id="horario-zona">
+                        <option value="">-- Primero registre una zona --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="horario-dias">Días de Recolección *</label>
+                    <input type="text" id="horario-dias" placeholder="Ej. Lunes, Miércoles y Viernes">
+                </div>
+                <div class="form-group">
+                    <label for="horario-hora">Hora aproximada *</label>
+                    <input type="time" id="horario-hora">
+                </div>
+                <button type="submit">Guardar Horario</button>
+                <div id="mensaje-horario" class="mensaje"></div>
+            </form>
+        </div>
+    </div>
+
     <div class="container">
-        <h1>♻️ Panel de Administración - EMSA</h1>
-
-        <h2>1. Registrar Zona de Recolección</h2>
-        <form id="form-zona">
-            <div class="form-group">
-                <label for="zona-nombre">Nombre de la Zona *</label>
-                <input type="text" id="zona-nombre" placeholder="Ej. Ruta Norte">
-            </div>
-            <div class="form-group">
-                <label for="zona-barrios">Barrios *</label>
-                <input type="text" id="zona-barrios" placeholder="Ej. Cala Cala, Queru Queru">
-            </div>
-            <button type="submit">Guardar Zona</button>
-            <div id="mensaje-zona" class="mensaje"></div>
-        </form>
-
-        <hr>
-
-        <h2>2. Registrar Horarios</h2>
-        <form id="form-horario">
-            <div class="form-group">
-                <label for="horario-zona">Seleccionar Zona *</label>
-                <select id="horario-zona">
-                    <option value="">-- Primero registre una zona --</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="horario-dias">Días de Recolección *</label>
-                <input type="text" id="horario-dias" placeholder="Ej. Lunes, Miércoles y Viernes">
-            </div>
-            <div class="form-group">
-                <label for="horario-hora">Hora aproximada *</label>
-                <input type="time" id="horario-hora">
-            </div>
-            <button type="submit">Guardar Horario</button>
-            <div id="mensaje-horario" class="mensaje"></div>
-        </form>
-
-        <hr>
-
         <h2>3. Vista Ciudadano: Ver horarios del basurero</h2>
         <div class="form-group">
             <label for="consulta-zona">Seleccione su zona</label>
@@ -155,8 +174,6 @@
         <button id="btn-ver-zonas" type="button">Ver Zonas Disponibles</button>
         <div id="mensaje-ver-zonas" class="mensaje"></div>
         <div id="lista-zonas-ciudadano" class="list-container"></div>
-
-        <hr>
     </div>
 
     <script type="module" src="./src/basura-presenter.js"></script>
