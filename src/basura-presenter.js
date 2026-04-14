@@ -1,15 +1,17 @@
 import {
+    validarLogin,
     registrarZona,
     registrarHorario,
     obtenerZonas,
     obtenerHorarios,
     verHorariosPorZona,
     verZonasDisponibles,
-    validarLogin
 } from './basura-model.js';
 
 import {
     obtenerElementosVista,
+    obtenerDatosLogin,
+    mostrarPanelAdmin,
     obtenerDatosZona,
     obtenerDatosHorario,
     obtenerZonaConsulta,
@@ -25,6 +27,21 @@ import {
 } from './basura-view.js';
 
 const elementos = obtenerElementosVista();
+
+elementos.formLogin.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const datos = obtenerDatosLogin();
+    const resultado = validarLogin(datos.usuario, datos.pass);
+
+    if (!resultado.exito) {
+        mostrarMensaje(elementos.msgLogin, resultado.mensaje, "red");
+        return;
+    }
+    mostrarPanelAdmin(true);
+});
+
+mostrarPanelAdmin(false);
 
 elementos.formZona.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -92,16 +109,3 @@ elementos.btnVerZonas.addEventListener('click', function () {
 actualizarSelectZonas(obtenerZonas());
 renderizarRutas(obtenerHorarios(), obtenerZonas());
 
-elementos.formLogin.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const datos = obtenerDatosLogin();
-    const resultado = validarLogin(datos.usuario, datos.pass);
-
-    if (!resultado.exito) {
-        mostrarMensaje(elementos.msgLogin, resultado.mensaje, "red");
-        return;
-    }
-    mostrarPanelAdmin(true);
-});
-mostrarPanelAdmin(false);
