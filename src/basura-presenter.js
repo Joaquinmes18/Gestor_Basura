@@ -4,7 +4,8 @@ import {
     obtenerZonas,
     obtenerHorarios,
     verHorariosPorZona,
-    verZonasDisponibles
+    verZonasDisponibles,
+    validarLogin
 } from './basura-model.js';
 
 import {
@@ -90,3 +91,17 @@ elementos.btnVerZonas.addEventListener('click', function () {
 
 actualizarSelectZonas(obtenerZonas());
 renderizarRutas(obtenerHorarios(), obtenerZonas());
+
+elementos.formLogin.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const datos = obtenerDatosLogin();
+    const resultado = validarLogin(datos.usuario, datos.pass);
+
+    if (!resultado.exito) {
+        mostrarMensaje(elementos.msgLogin, resultado.mensaje, "red");
+        return;
+    }
+    mostrarPanelAdmin(true);
+});
+mostrarPanelAdmin(false);
