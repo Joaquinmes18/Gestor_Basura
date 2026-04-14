@@ -15,6 +15,11 @@ const btnVerZonas = document.getElementById('btn-ver-zonas');
 const msgVerZonas = document.getElementById('mensaje-ver-zonas');
 const listaZonasCiudadano = document.getElementById('lista-zonas-ciudadano');
 
+const sectionLogin = document.getElementById('section-login');
+const sectionAdmin = document.getElementById('section-admin'); // Envuelve tus formularios 1 y 2
+const formLogin = document.getElementById('form-login');
+const msgLogin = document.getElementById('mensaje-login');
+
 export function obtenerElementosVista() {
     return {
         formZona,
@@ -29,7 +34,11 @@ export function obtenerElementosVista() {
         listaHorariosCiudadano,
         btnVerZonas,
         msgVerZonas,
-        listaZonasCiudadano
+        listaZonasCiudadano,
+        formLogin,
+        msgLogin,
+        sectionLogin,
+        sectionAdmin
     };
 }
 
@@ -164,4 +173,21 @@ export function limpiarVistaHorariosCiudadano() {
 export function limpiarVistaZonasCiudadano() {
     listaZonasCiudadano.innerHTML = '';
     msgVerZonas.textContent = '';
+}
+
+export function obtenerDatosLogin() {
+    return {
+        usuario: document.getElementById('login-user').value.trim(),
+        pass: document.getElementById('login-pass').value.trim()
+    };
+}
+
+export function mostrarPanelAdmin(mostrar) {
+    if (mostrar) {
+        sectionLogin.style.display = 'none';
+        sectionAdmin.style.display = 'block';
+    } else {
+        sectionLogin.style.display = 'block';
+        sectionAdmin.style.display = 'none';
+    }
 }

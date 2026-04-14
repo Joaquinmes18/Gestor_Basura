@@ -1,6 +1,9 @@
 let zonas = [];
 let horarios = [];
 
+const ADMIN_USER = "admin";
+const ADMIN_PASS = "12345";
+
 export function registrarZona(nombre, barrios) {
     if (!nombre || !barrios) {
         return {
@@ -93,5 +96,26 @@ export function verZonasDisponibles() {
         exito: true,
         mensaje: "",
         datos: zonas
+    };
+}
+
+export function validarLogin(admin, password) {
+    if (!admin || !password) {
+        return {
+            exito: false,
+            mensaje: "Por favor, complete todos los campos"
+        };
+    }
+
+    if (admin === ADMIN_USER && password === ADMIN_PASS) {
+        return {
+            exito: true,
+            mensaje: "Acceso correcto"
+        };
+    }
+
+    return {
+        exito: false,
+        mensaje: "Usuario o contraseña incorrectos"
     };
 }
