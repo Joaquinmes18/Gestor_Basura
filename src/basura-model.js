@@ -1,5 +1,6 @@
 let zonas = [];
 let horarios = [];
+let reportes = [];
 
 const ADMIN_USER = "admin";
 const ADMIN_PASS = "12345";
@@ -53,6 +54,10 @@ export function obtenerZonas() {
 
 export function obtenerHorarios() {
     return horarios;
+}
+
+export function obtenerReportes() {
+    return reportes;
 }
 
 export function verHorariosPorZona(zonaSeleccionada) {
@@ -117,5 +122,41 @@ export function validarLogin(admin, password) {
     return {
         exito: false,
         mensaje: "Usuario o contraseña incorrectos"
+    };
+}
+
+export function registrarReporte(zonaSeleccionada, descripcion) {
+    if (!zonaSeleccionada || !descripcion) {
+        return {
+            exito: false,
+            mensaje: "Por favor, complete los datos del reporte"
+        };
+    }
+
+    reportes.push({
+        zona: zonaSeleccionada,
+        descripcion: descripcion,
+        fecha: new Date().toLocaleString("es-BO")
+    });
+
+    return {
+        exito: true,
+        mensaje: "Reporte registrado correctamente."
+    };
+}
+
+export function verReportesAdmin() {
+    if (reportes.length === 0) {
+        return {
+            exito: false,
+            mensaje: "No existen reportes registrados",
+            datos: []
+        };
+    }
+
+    return {
+        exito: true,
+        mensaje: "",
+        datos: reportes
     };
 }

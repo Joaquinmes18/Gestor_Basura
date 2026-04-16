@@ -16,9 +16,9 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            flex-direction: column; 
-            justify-content: flex-start; 
-            align-items: center; 
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
             padding: 40px 20px;
             gap: 20px;
         }
@@ -29,7 +29,7 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             padding: 40px;
             width: 100%;
-            max-width: 600px; 
+            max-width: 600px;
             margin-bottom: 0;
         }
 
@@ -52,12 +52,20 @@
 
         input[type="text"],
         input[type="time"],
-        select {
+        select,
+        textarea,
+        input[type="password"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 1em;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
         }
 
         button {
@@ -110,7 +118,7 @@
             </div>
             <div class="form-group">
                 <label for="login-pass">Contraseña</label>
-                <input type="password" id="login-pass" placeholder="********" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                <input type="password" id="login-pass" placeholder="********">
             </div>
             <button type="submit">Ingresar</button>
             <div id="mensaje-login" class="mensaje"></div>
@@ -158,14 +166,21 @@
             </form>
 
             <hr>
-            <h2>Rutas Registradas (Vista Admin)</h2>
+
+            <h2>3. Rutas Registradas (Vista Admin)</h2>
             <div id="lista-rutas" class="list-container"></div>
 
+            <hr>
+
+            <h2>4. Ver reportes de usuario</h2>
+            <button id="btn-ver-reportes" type="button">Ver Reportes</button>
+            <div id="mensaje-ver-reportes" class="mensaje"></div>
+            <div id="lista-reportes-admin" class="list-container"></div>
         </div>
     </div>
 
     <div class="container">
-        <h2>3. Vista Ciudadano: Ver horarios del basurero</h2>
+        <h2>5. Vista Ciudadano: Ver horarios del basurero</h2>
         <div class="form-group">
             <label for="consulta-zona">Seleccione su zona</label>
             <select id="consulta-zona">
@@ -178,10 +193,28 @@
 
         <hr>
 
-        <h2>4. Vista Ciudadano: Ver zonas de recolección</h2>
+        <h2>6. Vista Ciudadano: Ver zonas de recolección</h2>
         <button id="btn-ver-zonas" type="button">Ver Zonas Disponibles</button>
         <div id="mensaje-ver-zonas" class="mensaje"></div>
         <div id="lista-zonas-ciudadano" class="list-container"></div>
+
+        <hr>
+
+        <h2>7. Vista Ciudadano: Generar reporte de basura acumulada</h2>
+        <form id="form-reporte">
+            <div class="form-group">
+                <label for="reporte-zona">Seleccione su zona *</label>
+                <select id="reporte-zona">
+                    <option value="">-- No hay zonas disponibles --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="reporte-descripcion">Descripción del reporte *</label>
+                <textarea id="reporte-descripcion" placeholder="Describa el problema de basura acumulada"></textarea>
+            </div>
+            <button type="submit">Generar Reporte</button>
+            <div id="mensaje-reporte" class="mensaje"></div>
+        </form>
     </div>
 
     <script type="module" src="./src/basura-presenter.js"></script>

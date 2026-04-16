@@ -6,6 +6,8 @@ import {
     obtenerHorarios,
     verHorariosPorZona,
     verZonasDisponibles,
+    registrarReporte,
+    verReportesAdmin
 } from './basura-model.js';
 
 import {
@@ -15,15 +17,19 @@ import {
     obtenerDatosZona,
     obtenerDatosHorario,
     obtenerZonaConsulta,
+    obtenerDatosReporte,
     mostrarMensaje,
     limpiarFormularioZona,
     limpiarFormularioHorario,
+    limpiarFormularioReporte,
     actualizarSelectZonas,
     renderizarRutas,
     renderizarHorariosCiudadano,
     renderizarZonasCiudadano,
+    renderizarReportesAdmin,
     limpiarVistaHorariosCiudadano,
-    limpiarVistaZonasCiudadano
+    limpiarVistaZonasCiudadano,
+    limpiarVistaReportesAdmin
 } from './basura-view.js';
 
 const elementos = obtenerElementosVista();
@@ -38,6 +44,7 @@ elementos.formLogin.addEventListener('submit', function (e) {
         mostrarMensaje(elementos.msgLogin, resultado.mensaje, "red");
         return;
     }
+
     mostrarPanelAdmin(true);
 });
 
@@ -106,6 +113,36 @@ elementos.btnVerZonas.addEventListener('click', function () {
     renderizarZonasCiudadano(resultado.datos);
 });
 
+elementos.formReporte.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const datosReporte = obtenerDatosReporte();
+    const resultado = registrarReporte(
+        datosReporte.zonaSeleccionada,
+        datosReporte.descripcion
+    );
+
+    if (!resultado.exito) {
+        mostrarMensaje(elementos.msgReporte, resultado.mensaje, "red");
+        return;
+    }
+
+    mostrarMensaje(elementos.msgReporte, resultado.mensaje, "green");
+    limpiarFormularioReporte();
+});
+
+elementos.btnVerReportes.addEventListener('click', function () {
+    const resultado = verReportesAdmin();
+
+    limpiarVistaReportesAdmin();
+
+    if (!resultado.exito) {
+        mostrarMensaje(elementos.msgVerReportes, resultado.mensaje, "red");
+        return;
+    }
+
+    renderizarReportesAdmin(resultado.datos);
+});
+
 actualizarSelectZonas(obtenerZonas());
 renderizarRutas(obtenerHorarios(), obtenerZonas());
-

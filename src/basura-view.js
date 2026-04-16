@@ -1,3 +1,8 @@
+const formLogin = document.getElementById('form-login');
+const msgLogin = document.getElementById('mensaje-login');
+const sectionLogin = document.getElementById('section-login');
+const sectionAdmin = document.getElementById('section-admin');
+
 const formZona = document.getElementById('form-zona');
 const msgZona = document.getElementById('mensaje-zona');
 const selectZona = document.getElementById('horario-zona');
@@ -15,13 +20,20 @@ const btnVerZonas = document.getElementById('btn-ver-zonas');
 const msgVerZonas = document.getElementById('mensaje-ver-zonas');
 const listaZonasCiudadano = document.getElementById('lista-zonas-ciudadano');
 
-const sectionLogin = document.getElementById('section-login');
-const sectionAdmin = document.getElementById('section-admin'); 
-const formLogin = document.getElementById('form-login');
-const msgLogin = document.getElementById('mensaje-login');
+const formReporte = document.getElementById('form-reporte');
+const selectReporteZona = document.getElementById('reporte-zona');
+const msgReporte = document.getElementById('mensaje-reporte');
+
+const btnVerReportes = document.getElementById('btn-ver-reportes');
+const msgVerReportes = document.getElementById('mensaje-ver-reportes');
+const listaReportesAdmin = document.getElementById('lista-reportes-admin');
 
 export function obtenerElementosVista() {
     return {
+        formLogin,
+        msgLogin,
+        sectionLogin,
+        sectionAdmin,
         formZona,
         msgZona,
         selectZona,
@@ -35,13 +47,31 @@ export function obtenerElementosVista() {
         btnVerZonas,
         msgVerZonas,
         listaZonasCiudadano,
-        formLogin,
-        msgLogin,
-        sectionLogin,
-        sectionAdmin,
-        btnVerHorarios: document.getElementById('btn-ver-horarios'),
-        btnVerZonas: document.getElementById('btn-ver-zonas')
+        formReporte,
+        selectReporteZona,
+        msgReporte,
+        btnVerReportes,
+        msgVerReportes,
+        listaReportesAdmin
     };
+}
+
+export function obtenerDatosLogin() {
+    return {
+        usuario: document.getElementById('login-user').value.trim(),
+        pass: document.getElementById('login-pass').value.trim()
+    };
+}
+
+export function mostrarPanelAdmin(mostrar) {
+    if (mostrar) {
+        sectionLogin.style.display = 'none';
+        sectionAdmin.style.display = 'block';
+        return;
+    }
+
+    sectionLogin.style.display = 'block';
+    sectionAdmin.style.display = 'none';
 }
 
 export function obtenerDatosZona() {
@@ -63,6 +93,13 @@ export function obtenerZonaConsulta() {
     return selectConsultaZona.value;
 }
 
+export function obtenerDatosReporte() {
+    return {
+        zonaSeleccionada: document.getElementById('reporte-zona').value,
+        descripcion: document.getElementById('reporte-descripcion').value.trim()
+    };
+}
+
 export function mostrarMensaje(elemento, texto, color) {
     elemento.textContent = texto;
     elemento.style.color = color;
@@ -76,13 +113,19 @@ export function limpiarFormularioHorario() {
     formHorario.reset();
 }
 
+export function limpiarFormularioReporte() {
+    formReporte.reset();
+}
+
 export function actualizarSelectZonas(zonas) {
     selectZona.innerHTML = '';
     selectConsultaZona.innerHTML = '';
+    selectReporteZona.innerHTML = '';
 
     if (zonas.length === 0) {
         selectZona.innerHTML = '<option value="">-- Primero registre una zona --</option>';
         selectConsultaZona.innerHTML = '<option value="">-- No hay zonas disponibles --</option>';
+        selectReporteZona.innerHTML = '<option value="">-- No hay zonas disponibles --</option>';
         return;
     }
 
@@ -96,6 +139,11 @@ export function actualizarSelectZonas(zonas) {
     optionCiudadanoInicial.textContent = '-- Seleccione una zona --';
     selectConsultaZona.appendChild(optionCiudadanoInicial);
 
+    const optionReporteInicial = document.createElement('option');
+    optionReporteInicial.value = '';
+    optionReporteInicial.textContent = '-- Seleccione una zona --';
+    selectReporteZona.appendChild(optionReporteInicial);
+
     for (let i = 0; i < zonas.length; i++) {
         const optionAdmin = document.createElement('option');
         optionAdmin.value = zonas[i].nombre;
@@ -106,6 +154,11 @@ export function actualizarSelectZonas(zonas) {
         optionCiudadano.value = zonas[i].nombre;
         optionCiudadano.textContent = zonas[i].nombre;
         selectConsultaZona.appendChild(optionCiudadano);
+
+        const optionReporte = document.createElement('option');
+        optionReporte.value = zonas[i].nombre;
+        optionReporte.textContent = zonas[i].nombre;
+        selectReporteZona.appendChild(optionReporte);
     }
 }
 
@@ -167,6 +220,24 @@ export function renderizarZonasCiudadano(zonas) {
     }
 }
 
+export function renderizarReportesAdmin(reportes) {
+    listaReportesAdmin.innerHTML = '';
+
+    for (let i = 0; i < reportes.length; i++) {
+        const reporte = reportes[i];
+
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML =
+            '<h3 style="color: #764ba2; margin-bottom: 5px;">🗑️ Reporte ' + (i + 1) + '</h3>' +
+            '<p><strong>Zona:</strong> ' + reporte.zona + '</p>' +
+            '<p><strong>Descripción:</strong> ' + reporte.descripcion + '</p>' +
+            '<p><strong>Fecha:</strong> ' + reporte.fecha + '</p>';
+
+        listaReportesAdmin.appendChild(div);
+    }
+}
+
 export function limpiarVistaHorariosCiudadano() {
     listaHorariosCiudadano.innerHTML = '';
     msgConsultaHorario.textContent = '';
@@ -177,22 +248,7 @@ export function limpiarVistaZonasCiudadano() {
     msgVerZonas.textContent = '';
 }
 
-export function obtenerDatosLogin() {
-    return {
-        usuario: document.getElementById('login-user').value.trim(),
-        pass: document.getElementById('login-pass').value.trim()
-    };
-}
-
-export function mostrarPanelAdmin(mostrar) {
-    const sectionLogin = document.getElementById('section-login');
-    const sectionAdmin = document.getElementById('section-admin');
-
-    if (mostrar) {
-        sectionLogin.style.display = 'none';
-        sectionAdmin.style.display = 'block';
-    } else {
-        sectionLogin.style.display = 'block';
-        sectionAdmin.style.display = 'none';
-    }
+export function limpiarVistaReportesAdmin() {
+    listaReportesAdmin.innerHTML = '';
+    msgVerReportes.textContent = '';
 }
