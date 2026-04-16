@@ -2,6 +2,7 @@ const formLogin = document.getElementById('form-login');
 const msgLogin = document.getElementById('mensaje-login');
 const sectionLogin = document.getElementById('section-login');
 const sectionAdmin = document.getElementById('section-admin');
+const btnLogout = document.getElementById('btn-logout');
 
 const formZona = document.getElementById('form-zona');
 const msgZona = document.getElementById('mensaje-zona');
@@ -52,7 +53,8 @@ export function obtenerElementosVista() {
         msgReporte,
         btnVerReportes,
         msgVerReportes,
-        listaReportesAdmin
+        listaReportesAdmin,
+        btnLogout
     };
 }
 

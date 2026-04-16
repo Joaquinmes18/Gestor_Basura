@@ -144,5 +144,15 @@ elementos.btnVerReportes.addEventListener('click', function () {
     renderizarReportesAdmin(resultado.datos);
 });
 
+elementos.btnLogout.addEventListener('click', function() {
+    limpiarFormularioZona();
+    limpiarFormularioHorario();
+    
+    mostrarPanelAdmin(false);
+    mostrarMensaje(elementos.msgLogin, "", "");
+    
+    console.log("Sesión cerrada correctamente");
+});
+
 actualizarSelectZonas(obtenerZonas());
 renderizarRutas(obtenerHorarios(), obtenerZonas());
