@@ -2,6 +2,7 @@ const formLogin = document.getElementById('form-login');
 const msgLogin = document.getElementById('mensaje-login');
 const sectionLogin = document.getElementById('section-login');
 const sectionAdmin = document.getElementById('section-admin');
+const btnLogout = document.getElementById('btn-logout');
 
 const formZona = document.getElementById('form-zona');
 const msgZona = document.getElementById('mensaje-zona');
@@ -52,7 +53,8 @@ export function obtenerElementosVista() {
         msgReporte,
         btnVerReportes,
         msgVerReportes,
-        listaReportesAdmin
+        listaReportesAdmin,
+        btnLogout
     };
 }
 
@@ -179,11 +181,15 @@ export function renderizarRutas(horarios, zonas) {
 
         const div = document.createElement('div');
         div.className = 'list-item';
-        div.innerHTML =
-            '<h3 style="color: #764ba2; margin-bottom: 5px;">📍 ' + horario.zona + '</h3>' +
-            '<p><strong>Barrios:</strong> ' + infoZona.barrios + '</p>' +
-            '<p><strong>Días:</strong> ' + horario.dias + '</p>' +
-            '<p><strong>Hora aprox:</strong> ' + horario.hora + '</p>';
+        div.innerHTML = `
+            <h3 style="color: #764ba2; margin-bottom: 5px;">📍 ${horario.zona}</h3>
+            <p><strong>Barrios:</strong> ${infoZona ? infoZona.barrios : 'No especificados'}</p>
+            <p><strong>Días:</strong> ${horario.dias}</p>
+            <p><strong>Hora aprox:</strong> ${horario.hora}</p>
+            <button class="btn-edit" data-index="${i}" style="width: auto; background: #f39c12; padding: 5px 10px;">
+                Editar ✏️
+            </button>
+        `;
 
         listaRutas.appendChild(div);
     }
@@ -251,4 +257,10 @@ export function limpiarVistaZonasCiudadano() {
 export function limpiarVistaReportesAdmin() {
     listaReportesAdmin.innerHTML = '';
     msgVerReportes.textContent = '';
+}
+
+export function cargarDatosEnFormularioHorario(horario) {
+    document.getElementById('horario-zona').value = horario.zona;
+    document.getElementById('horario-dias').value = horario.dias;
+    document.getElementById('horario-hora').value = horario.hora;
 }

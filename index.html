@@ -105,6 +105,14 @@
             border-top: 1px solid #eee;
             margin: 30px 0;
         }
+
+        #btn-logout {
+            width: auto;                  /* Para que no ocupe todo el ancho */
+            margin-top: 0;                /* Quita el margen superior por defecto */
+            padding: 8px 15px;            /* Hazlo un poco más pequeño y elegante */
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            font-size: 0.85em;
+        }
     </style>
 </head>
 
@@ -128,7 +136,7 @@
     <div id="section-admin" style="display: none;">
         <div class="container" style="margin-bottom: 20px;">
             <h1>♻️ Panel de Administración - EMSA</h1>
-
+            <button id="btn-logout">Cerrar Sesión</button>
             <h2>Registrar Zona de Recolección</h2>
             <form id="form-zona">
                 <div class="form-group">

@@ -160,3 +160,24 @@ export function verReportesAdmin() {
         datos: reportes
     };
 }
+
+export function editarHorario(indice, nuevaZona, nuevosDias, nuevaHora) {
+    if (!nuevaZona || !nuevosDias || !nuevaHora) {
+        return {
+            exito: false,
+            mensaje: "Por favor, complete todos los campos"
+        };
+    }
+    if (horarios[indice]) {
+        horarios[indice] = { zona: nuevaZona, dias: nuevosDias, hora: nuevaHora };
+        return {
+            exito: true,
+            mensaje: "Horario actualizado exitosamente."
+        };
+    }
+
+    return {
+        exito: false,
+        mensaje: "No se pudo actualizar el horario"
+    };
+}

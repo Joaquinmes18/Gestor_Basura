@@ -7,7 +7,8 @@ import {
     verZonasDisponibles,
     validarLogin,
     registrarReporte,
-    verReportesAdmin
+    verReportesAdmin,
+    editarHorario
 } from "./basura-model.js";
 
 describe("Gestor de Basura", () => {
@@ -96,4 +97,13 @@ describe("Gestor de Basura", () => {
         expect(res.exito).toEqual(true);
     });
 
-});
+    it("deberia editar un horario correctamente", () => {
+       const resultado = editarHorario(0, 'Zona Norte', 'Martes', '09:00');
+    });
+
+    it("debería fallar si se intenta editar con campos vacíos", () => {
+        const resultado = editarHorario(0, '', '', '');
+        expect(resultado.exito).toBe(false);
+        expect(resultado.mensaje).toBe("Por favor, complete todos los campos");
+    });
+})
