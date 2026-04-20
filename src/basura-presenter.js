@@ -69,7 +69,6 @@ elementos.formZona.addEventListener('submit', function (e) {
     actualizarSelectZonas(obtenerZonas());
 });
 
-// En basura-presenter.js
 
 elementos.formHorario.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -77,27 +76,21 @@ elementos.formHorario.addEventListener('submit', function (e) {
     const datos = obtenerDatosHorario();
     let resultado;
 
-    // EL TRUCO ESTÁ AQUÍ:
     if (indiceEditando !== null) {
-        // Si hay un índice, llamamos a la función de EDITAR
         resultado = editarHorario(indiceEditando, datos.zonaSeleccionada, datos.dias, datos.hora);
     } else {
-        // Si es null, es un registro NUEVO
         resultado = registrarHorario(datos.zonaSeleccionada, datos.dias, datos.hora);
     }
 
     if (resultado.exito) {
         mostrarMensaje(elementos.msgHorario, resultado.mensaje, "green");
         
-        // --- LIMPIEZA POST-EDICIÓN ---
         limpiarFormularioHorario();
-        indiceEditando = null; // IMPORTANTE: Volver a null para que el próximo sea nuevo
+        indiceEditando = null; 
         
-        // Cambiar el botón de vuelta a su estado original
         elementos.formHorario.querySelector('button').textContent = "Guardar Horario";
         elementos.formHorario.querySelector('button').style.background = ""; // Reset color
         
-        // Refrescar la lista
         renderizarRutas(obtenerHorarios(), obtenerZonas());
     } else {
         mostrarMensaje(elementos.msgHorario, resultado.mensaje, "red");
@@ -172,11 +165,6 @@ elementos.btnLogout.addEventListener('click', function() {
     console.log("Sesión cerrada correctamente");
 });
 
-actualizarSelectZonas(obtenerZonas());
-renderizarRutas(obtenerHorarios(), obtenerZonas());
-
-
-
 elementos.listaRutas.addEventListener('click', function (e) {
     console.log("Elemento clickeado:", e.target);
     if (e.target.classList.contains('btn-edit')) {
@@ -189,25 +177,10 @@ elementos.listaRutas.addEventListener('click', function (e) {
     }
 });
 
-elementos.formHorario.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const datos = obtenerDatosHorario();
-    const resultado = registrarHorario(datos.zonaSeleccionada, datos.dias, datos.hora);
+actualizarSelectZonas(obtenerZonas());
+renderizarRutas(obtenerHorarios(), obtenerZonas());
 
-    if (indiceEditando !== null) {
-        resultado = editarHorario(indiceEditando, datos.zonaSeleccionada, datos.dias, datos.hora);
-    } else {
-        resultado = registrarHorario(datos.zonaSeleccionada, datos.dias, datos.hora);
-    }
 
-    if (!resultado.exito) {
-        mostrarMensaje(elementos.msgHorario, resultado.mensaje, "red");
-        return;
-    }
 
-    mostrarMensaje(elementos.msgHorario, resultado.mensaje, "green");
-    limpiarFormularioHorario();
-    indiceEditando = null; 
-    elementos.formHorario.querySelector('button').textContent = "Guardar Horario";
-    renderizarRutas(obtenerHorarios(), obtenerZonas());
-});
+
+
