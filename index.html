@@ -80,6 +80,30 @@
             margin-top: 10px;
         }
 
+        .btn-admin-link {
+            background: none;
+            color: #aaa;
+            font-size: 0.8em;
+            text-decoration: underline;
+            border: none;
+            cursor: pointer;
+            width: auto;
+            padding: 6px;
+            margin-top: 0;
+            display: block;
+            text-align: center;
+        }
+
+        .btn-admin-link:hover { color: #666; }
+
+        #btn-logout {
+            width: auto;
+            margin-top: 0;
+            padding: 8px 15px;
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            font-size: 0.85em;
+        }
+
         .mensaje {
             margin-top: 10px;
             font-weight: bold;
@@ -106,19 +130,67 @@
             margin: 30px 0;
         }
 
-        #btn-logout {
-            width: auto;                  /* Para que no ocupe todo el ancho */
-            margin-top: 0;                /* Quita el margen superior por defecto */
-            padding: 8px 15px;            /* Hazlo un poco más pequeño y elegante */
-            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
-            font-size: 0.85em;
+        .admin-link-wrapper {
+            text-align: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
         }
     </style>
 </head>
 
 <body>
-    <div id="section-login" class="container" style="margin-bottom: 20px;">
-        <h1>🔐 Iniciar Sesión (Admin/Emsa)</h1>
+
+    <!-- VISTA CIUDADANO (pantalla principal) -->
+    <div id="section-ciudadano" class="container">
+        <h1>♻️ Gestor de Basura - EMSA</h1>
+
+        <h2>Ver horarios del basurero</h2>
+        <div class="form-group">
+            <label for="consulta-zona">Seleccione su zona</label>
+            <select id="consulta-zona">
+                <option value="">-- No hay zonas disponibles --</option>
+            </select>
+        </div>
+        <button id="btn-ver-horarios" type="button">Ver Horarios</button>
+        <div id="mensaje-consulta-horario" class="mensaje"></div>
+        <div id="lista-horarios-ciudadano" class="list-container"></div>
+
+        <hr>
+
+        <h2>Ver zonas de recolección</h2>
+        <button id="btn-ver-zonas" type="button">Ver Zonas Disponibles</button>
+        <div id="mensaje-ver-zonas" class="mensaje"></div>
+        <div id="lista-zonas-ciudadano" class="list-container"></div>
+
+        <hr>
+
+        <h2>Reportar basura acumulada</h2>
+        <form id="form-reporte">
+            <div class="form-group">
+                <label for="reporte-zona">Seleccione su zona *</label>
+                <select id="reporte-zona">
+                    <option value="">-- No hay zonas disponibles --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="reporte-descripcion">Descripción del reporte *</label>
+                <textarea id="reporte-descripcion" placeholder="Describa el problema de basura acumulada"></textarea>
+            </div>
+            <button type="submit">Generar Reporte</button>
+            <div id="mensaje-reporte" class="mensaje"></div>
+        </form>
+
+        <div class="admin-link-wrapper">
+            <button class="btn-admin-link" id="btn-mostrar-login" type="button">
+                Acceso administrador (EMSA)
+            </button>
+        </div>
+    </div>
+
+    <!-- LOGIN ADMIN (oculto por defecto) -->
+    <div id="section-login" class="container" style="display: none;">
+        <h1>🔐 Iniciar Sesión — Admin EMSA</h1>
         <form id="form-login">
             <div class="form-group">
                 <label for="login-user">Usuario</label>
@@ -131,12 +203,21 @@
             <button type="submit">Ingresar</button>
             <div id="mensaje-login" class="mensaje"></div>
         </form>
+        <div class="admin-link-wrapper">
+            <button class="btn-admin-link" id="btn-volver-ciudadano" type="button">
+                ← Volver a vista ciudadano
+            </button>
+        </div>
     </div>
 
+    <!-- PANEL ADMIN (oculto hasta login exitoso) -->
     <div id="section-admin" style="display: none;">
-        <div class="container" style="margin-bottom: 20px;">
-            <h1>♻️ Panel de Administración - EMSA</h1>
+        <div class="container">
+            <h1>⚙️ Panel de Administración — EMSA</h1>
             <button id="btn-logout">Cerrar Sesión</button>
+
+            <hr>
+
             <h2>Registrar Zona de Recolección</h2>
             <form id="form-zona">
                 <div class="form-group">
@@ -169,7 +250,7 @@
                     <label for="horario-hora">Hora aproximada *</label>
                     <input type="time" id="horario-hora">
                 </div>
-                <button type="submit">Guardar Horario</button>
+                <button type="submit" id="btn-submit-horario">Guardar Horario</button>
                 <div id="mensaje-horario" class="mensaje"></div>
             </form>
 
@@ -180,49 +261,11 @@
 
             <hr>
 
-            <h2>4. Ver reportes de usuario</h2>
+            <h2>Ver reportes de usuario</h2>
             <button id="btn-ver-reportes" type="button">Ver Reportes</button>
             <div id="mensaje-ver-reportes" class="mensaje"></div>
             <div id="lista-reportes-admin" class="list-container"></div>
         </div>
-    </div>
-
-    <div class="container">
-        <h2>Ver horarios del basurero</h2>
-        <div class="form-group">
-            <label for="consulta-zona">Seleccione su zona</label>
-            <select id="consulta-zona">
-                <option value="">-- No hay zonas disponibles --</option>
-            </select>
-        </div>
-        <button id="btn-ver-horarios" type="button">Ver Horarios</button>
-        <div id="mensaje-consulta-horario" class="mensaje"></div>
-        <div id="lista-horarios-ciudadano" class="list-container"></div>
-
-        <hr>
-
-        <h2>Ver zonas de recolección</h2>
-        <button id="btn-ver-zonas" type="button">Ver Zonas Disponibles</button>
-        <div id="mensaje-ver-zonas" class="mensaje"></div>
-        <div id="lista-zonas-ciudadano" class="list-container"></div>
-
-        <hr>
-
-        <h2>Generar reporte de basura acumulada</h2>
-        <form id="form-reporte">
-            <div class="form-group">
-                <label for="reporte-zona">Seleccione su zona *</label>
-                <select id="reporte-zona">
-                    <option value="">-- No hay zonas disponibles --</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="reporte-descripcion">Descripción del reporte *</label>
-                <textarea id="reporte-descripcion" placeholder="Describa el problema de basura acumulada"></textarea>
-            </div>
-            <button type="submit">Generar Reporte</button>
-            <div id="mensaje-reporte" class="mensaje"></div>
-        </form>
     </div>
 
     <script type="module" src="./src/basura-presenter.js"></script>

@@ -2,7 +2,10 @@ const formLogin = document.getElementById('form-login');
 const msgLogin = document.getElementById('mensaje-login');
 const sectionLogin = document.getElementById('section-login');
 const sectionAdmin = document.getElementById('section-admin');
+const sectionCiudadano = document.getElementById('section-ciudadano');
 const btnLogout = document.getElementById('btn-logout');
+const btnMostrarLogin = document.getElementById('btn-mostrar-login');
+const btnVolverCiudadano = document.getElementById('btn-volver-ciudadano');
 
 const formZona = document.getElementById('form-zona');
 const msgZona = document.getElementById('mensaje-zona');
@@ -35,6 +38,10 @@ export function obtenerElementosVista() {
         msgLogin,
         sectionLogin,
         sectionAdmin,
+        sectionCiudadano,
+        btnMostrarLogin,
+        btnVolverCiudadano,
+        btnLogout,
         formZona,
         msgZona,
         selectZona,
@@ -53,8 +60,7 @@ export function obtenerElementosVista() {
         msgReporte,
         btnVerReportes,
         msgVerReportes,
-        listaReportesAdmin,
-        btnLogout
+        listaReportesAdmin
     };
 }
 
@@ -67,13 +73,15 @@ export function obtenerDatosLogin() {
 
 export function mostrarPanelAdmin(mostrar) {
     if (mostrar) {
+        sectionCiudadano.style.display = 'none';
         sectionLogin.style.display = 'none';
         sectionAdmin.style.display = 'block';
         return;
     }
 
-    sectionLogin.style.display = 'block';
     sectionAdmin.style.display = 'none';
+    sectionLogin.style.display = 'none';
+    sectionCiudadano.style.display = 'block';
 }
 
 export function obtenerDatosZona() {
@@ -181,15 +189,14 @@ export function renderizarRutas(horarios, zonas) {
 
         const div = document.createElement('div');
         div.className = 'list-item';
-        div.innerHTML = `
-            <h3 style="color: #764ba2; margin-bottom: 5px;">📍 ${horario.zona}</h3>
-            <p><strong>Barrios:</strong> ${infoZona ? infoZona.barrios : 'No especificados'}</p>
-            <p><strong>Días:</strong> ${horario.dias}</p>
-            <p><strong>Hora aprox:</strong> ${horario.hora}</p>
-            <button class="btn-edit" data-index="${i}" style="width: auto; background: #f39c12; padding: 5px 10px;">
-                Editar ✏️
-            </button>
-        `;
+        div.innerHTML =
+            '<h3 style="color: #764ba2; margin-bottom: 5px;">📍 ' + horario.zona + '</h3>' +
+            '<p><strong>Barrios:</strong> ' + (infoZona ? infoZona.barrios : 'No especificados') + '</p>' +
+            '<p><strong>Días:</strong> ' + horario.dias + '</p>' +
+            '<p><strong>Hora aprox:</strong> ' + horario.hora + '</p>' +
+            '<button type="button" class="btn-edit" data-index="' + i + '" ' +
+            'style="width: auto; margin-top: 8px; padding: 6px 14px; font-size: 0.85em; ' +
+            'background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">✏️ Editar</button>';
 
         listaRutas.appendChild(div);
     }
@@ -263,4 +270,16 @@ export function cargarDatosEnFormularioHorario(horario) {
     document.getElementById('horario-zona').value = horario.zona;
     document.getElementById('horario-dias').value = horario.dias;
     document.getElementById('horario-hora').value = horario.hora;
+}
+
+export function activarModoEdicion() {
+    const btn = document.getElementById('btn-submit-horario');
+    btn.textContent = '💾 Actualizar Horario';
+    btn.style.background = 'linear-gradient(135deg, #f39c12 0%, #e67e22 100%)';
+}
+
+export function desactivarModoEdicion() {
+    const btn = document.getElementById('btn-submit-horario');
+    btn.textContent = 'Guardar Horario';
+    btn.style.background = '';
 }

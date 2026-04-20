@@ -48,6 +48,33 @@ export function registrarHorario(zonaSeleccionada, dias, hora) {
     };
 }
 
+export function editarHorario(index, zonaSeleccionada, dias, hora) {
+    if (!zonaSeleccionada || !dias || !hora) {
+        return {
+            exito: false,
+            mensaje: "Por favor, complete todos los campos"
+        };
+    }
+
+    const i = parseInt(index);
+
+    if (isNaN(i) || i < 0 || i >= horarios.length) {
+        return {
+            exito: false,
+            mensaje: "Horario no encontrado."
+        };
+    }
+
+    horarios[i].zona = zonaSeleccionada;
+    horarios[i].dias = dias;
+    horarios[i].hora = hora;
+
+    return {
+        exito: true,
+        mensaje: "Horario actualizado exitosamente."
+    };
+}
+
 export function obtenerZonas() {
     return zonas;
 }
@@ -158,26 +185,5 @@ export function verReportesAdmin() {
         exito: true,
         mensaje: "",
         datos: reportes
-    };
-}
-
-export function editarHorario(indice, nuevaZona, nuevosDias, nuevaHora) {
-    if (!nuevaZona || !nuevosDias || !nuevaHora) {
-        return {
-            exito: false,
-            mensaje: "Por favor, complete todos los campos"
-        };
-    }
-    if (horarios[indice]) {
-        horarios[indice] = { zona: nuevaZona, dias: nuevosDias, hora: nuevaHora };
-        return {
-            exito: true,
-            mensaje: "Horario actualizado exitosamente."
-        };
-    }
-
-    return {
-        exito: false,
-        mensaje: "No se pudo actualizar el horario"
     };
 }
