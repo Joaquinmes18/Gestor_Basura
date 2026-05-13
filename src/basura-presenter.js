@@ -9,7 +9,7 @@ import {
     registrarReporte,
     verReportesAdmin,
     editarHorario
-} from './basura-model.js';
+} from "./basura-model.js";
 
 import {
     obtenerElementosVista,
@@ -34,117 +34,157 @@ import {
     cargarDatosEnFormularioHorario,
     activarModoEdicion,
     desactivarModoEdicion
-} from './basura-view.js';
+} from "./basura-view.js";
 
 const elementos = obtenerElementosVista();
-let indiceEditando = null;
 
-elementos.btnMostrarLogin.addEventListener('click', function () {
-    elementos.sectionCiudadano.style.display = 'none';
-    elementos.sectionLogin.style.display = 'block';
-});
+const COLORES_MENSAJE = {
+    ERROR: "red",
+    EXITO: "green",
+    LIMPIO: ""
+};
 
-elementos.btnVolverCiudadano.addEventListener('click', function () {
-    elementos.sectionLogin.style.display = 'none';
-    elementos.sectionCiudadano.style.display = 'block';
-});
+let indiceHorarioEditando = null;
 
-elementos.formLogin.addEventListener('submit', function (e) {
-    e.preventDefault();
+function mostrarError(elementoMensaje, mensaje) {
+    mostrarMensaje(elementoMensaje, mensaje, COLORES_MENSAJE.ERROR);
+}
 
-    const datos = obtenerDatosLogin();
-    const resultado = validarLogin(datos.usuario, datos.pass);
+function mostrarExito(elementoMensaje, mensaje) {
+    mostrarMensaje(elementoMensaje, mensaje, COLORES_MENSAJE.EXITO);
+}
+
+function actualizarVistaPrincipalAdmin() {
+    actualizarSelectZonas(obtenerZonas());
+    renderizarRutas(obtenerHorarios(), obtenerZonas());
+}
+
+function manejarResultadoFormulario(resultado, elementoMensaje) {
+    if (!resultado.exito) {
+        mostrarError(elementoMensaje, resultado.mensaje);
+        return false;
+    }
+
+    mostrarExito(elementoMensaje, resultado.mensaje);
+    return true;
+}
+
+function mostrarLoginAdmin() {
+    elementos.sectionCiudadano.style.display = "none";
+    elementos.sectionLogin.style.display = "block";
+}
+
+function volverVistaCiudadano() {
+    elementos.sectionLogin.style.display = "none";
+    elementos.sectionCiudadano.style.display = "block";
+}
+
+function iniciarSesion(evento) {
+    evento.preventDefault();
+
+    const datosLogin = obtenerDatosLogin();
+    const resultado = validarLogin(datosLogin.usuario, datosLogin.pass);
 
     if (!resultado.exito) {
-        mostrarMensaje(elementos.msgLogin, resultado.mensaje, "red");
+        mostrarError(elementos.msgLogin, resultado.mensaje);
         return;
     }
 
     mostrarPanelAdmin(true);
-});
+}
 
-elementos.formZona.addEventListener('submit', function (e) {
-    e.preventDefault();
+function guardarZona(evento) {
+    evento.preventDefault();
 
     const datosZona = obtenerDatosZona();
     const resultado = registrarZona(datosZona.nombre, datosZona.barrios);
 
-    if (!resultado.exito) {
-        mostrarMensaje(elementos.msgZona, resultado.mensaje, "red");
+    if (!manejarResultadoFormulario(resultado, elementos.msgZona)) {
         return;
     }
 
-    mostrarMensaje(elementos.msgZona, resultado.mensaje, "green");
     limpiarFormularioZona();
     actualizarSelectZonas(obtenerZonas());
-});
+}
 
-elementos.formHorario.addEventListener('submit', function (e) {
-    e.preventDefault();
+function guardarHorario(evento) {
+    evento.preventDefault();
 
-    const datos = obtenerDatosHorario();
-    let resultado;
+    const datosHorario = obtenerDatosHorario();
+    const resultado = indiceHorarioEditando !== null
+        ? editarHorario(
+            indiceHorarioEditando,
+            datosHorario.zonaSeleccionada,
+            datosHorario.dias,
+            datosHorario.hora
+        )
+        : registrarHorario(
+            datosHorario.zonaSeleccionada,
+            datosHorario.dias,
+            datosHorario.hora
+        );
 
-    if (indiceEditando !== null) {
-        resultado = editarHorario(indiceEditando, datos.zonaSeleccionada, datos.dias, datos.hora);
-    } else {
-        resultado = registrarHorario(datos.zonaSeleccionada, datos.dias, datos.hora);
-    }
-
-    if (!resultado.exito) {
-        mostrarMensaje(elementos.msgHorario, resultado.mensaje, "red");
+    if (!manejarResultadoFormulario(resultado, elementos.msgHorario)) {
         return;
     }
 
-    mostrarMensaje(elementos.msgHorario, resultado.mensaje, "green");
     limpiarFormularioHorario();
     desactivarModoEdicion();
-    indiceEditando = null;
-    renderizarRutas(obtenerHorarios(), obtenerZonas());
-});
+    indiceHorarioEditando = null;
+    actualizarVistaPrincipalAdmin();
+}
 
-elementos.listaRutas.addEventListener('click', function (e) {
-    if (!e.target.classList.contains('btn-edit')) return;
+function editarHorarioSeleccionado(evento) {
+    if (!evento.target.classList.contains("btn-edit")) {
+        return;
+    }
 
-    const index = parseInt(e.target.getAttribute('data-index'));
-    const horario = obtenerHorarios()[index];
+    const indiceHorario = Number.parseInt(evento.target.getAttribute("data-index"), 10);
+    const horarioSeleccionado = obtenerHorarios()[indiceHorario];
 
-    indiceEditando = index;
-    cargarDatosEnFormularioHorario(horario);
+    if (!horarioSeleccionado) {
+        return;
+    }
+
+    indiceHorarioEditando = indiceHorario;
+    cargarDatosEnFormularioHorario(horarioSeleccionado);
     activarModoEdicion();
 
-    elementos.formHorario.scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
+    elementos.formHorario.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
 
-elementos.btnVerHorarios.addEventListener('click', function () {
+function consultarHorariosPorZona() {
     const zonaSeleccionada = obtenerZonaConsulta();
     const resultado = verHorariosPorZona(zonaSeleccionada);
 
     limpiarVistaHorariosCiudadano();
 
     if (!resultado.exito) {
-        mostrarMensaje(elementos.msgConsultaHorario, resultado.mensaje, "red");
+        mostrarError(elementos.msgConsultaHorario, resultado.mensaje);
         return;
     }
 
     renderizarHorariosCiudadano(resultado.datos);
-});
+}
 
-elementos.btnVerZonas.addEventListener('click', function () {
+function consultarZonasDisponibles() {
     const resultado = verZonasDisponibles();
 
     limpiarVistaZonasCiudadano();
 
     if (!resultado.exito) {
-        mostrarMensaje(elementos.msgVerZonas, resultado.mensaje, "red");
+        mostrarError(elementos.msgVerZonas, resultado.mensaje);
         return;
     }
 
     renderizarZonasCiudadano(resultado.datos);
-});
+}
 
-elementos.formReporte.addEventListener('submit', function (e) {
-    e.preventDefault();
+function guardarReporte(evento) {
+    evento.preventDefault();
 
     const datosReporte = obtenerDatosReporte();
     const resultado = registrarReporte(
@@ -152,37 +192,55 @@ elementos.formReporte.addEventListener('submit', function (e) {
         datosReporte.descripcion
     );
 
-    if (!resultado.exito) {
-        mostrarMensaje(elementos.msgReporte, resultado.mensaje, "red");
+    if (!manejarResultadoFormulario(resultado, elementos.msgReporte)) {
         return;
     }
 
-    mostrarMensaje(elementos.msgReporte, resultado.mensaje, "green");
     limpiarFormularioReporte();
-});
+}
 
-elementos.btnVerReportes.addEventListener('click', function () {
+function consultarReportesAdmin() {
     const resultado = verReportesAdmin();
 
     limpiarVistaReportesAdmin();
 
     if (!resultado.exito) {
-        mostrarMensaje(elementos.msgVerReportes, resultado.mensaje, "red");
+        mostrarError(elementos.msgVerReportes, resultado.mensaje);
         return;
     }
 
     renderizarReportesAdmin(resultado.datos);
-});
+}
 
-elementos.btnLogout.addEventListener('click', function () {
+function cerrarSesion() {
     limpiarFormularioZona();
     limpiarFormularioHorario();
     desactivarModoEdicion();
-    indiceEditando = null;
-    mostrarPanelAdmin(false);
-    mostrarMensaje(elementos.msgLogin, "", "");
-});
 
-actualizarSelectZonas(obtenerZonas());
-renderizarRutas(obtenerHorarios(), obtenerZonas());
-mostrarPanelAdmin(false);
+    indiceHorarioEditando = null;
+
+    mostrarPanelAdmin(false);
+    mostrarMensaje(elementos.msgLogin, "", COLORES_MENSAJE.LIMPIO);
+}
+
+function inicializarEventos() {
+    elementos.btnMostrarLogin.addEventListener("click", mostrarLoginAdmin);
+    elementos.btnVolverCiudadano.addEventListener("click", volverVistaCiudadano);
+    elementos.formLogin.addEventListener("submit", iniciarSesion);
+    elementos.formZona.addEventListener("submit", guardarZona);
+    elementos.formHorario.addEventListener("submit", guardarHorario);
+    elementos.listaRutas.addEventListener("click", editarHorarioSeleccionado);
+    elementos.btnVerHorarios.addEventListener("click", consultarHorariosPorZona);
+    elementos.btnVerZonas.addEventListener("click", consultarZonasDisponibles);
+    elementos.formReporte.addEventListener("submit", guardarReporte);
+    elementos.btnVerReportes.addEventListener("click", consultarReportesAdmin);
+    elementos.btnLogout.addEventListener("click", cerrarSesion);
+}
+
+function inicializarAplicacion() {
+    inicializarEventos();
+    actualizarVistaPrincipalAdmin();
+    mostrarPanelAdmin(false);
+}
+
+inicializarAplicacion();

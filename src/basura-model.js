@@ -1,189 +1,229 @@
-let zonas = [];
-let horarios = [];
-let reportes = [];
-
-const ADMIN_USER = "admin";
-const ADMIN_PASS = "12345";
-
-export function registrarZona(nombre, barrios) {
-    if (!nombre || !barrios) {
-        return {
-            exito: false,
-            mensaje: "Por favor, complete todos los campos"
-        };
+class Zona {
+    constructor(nombre, barrios) {
+        this.nombre = nombre;
+        this.barrios = barrios;
     }
+}
 
-    const existeZona = zonas.find(function (z) {
-        return z.nombre.toLowerCase() === nombre.toLowerCase();
-    });
-
-    if (existeZona) {
-        return {
-            exito: false,
-            mensaje: "Error: El nombre de la zona ya existe. Debe ser único."
-        };
+class Horario {
+    constructor(zona, dias, hora) {
+        this.zona = zona;
+        this.dias = dias;
+        this.hora = hora;
     }
+}
 
-    zonas.push({ nombre, barrios });
+class Reporte {
+    constructor(zona, descripcion) {
+        this.zona = zona;
+        this.descripcion = descripcion;
+        this.fecha = new Date().toLocaleString("es-BO");
+    }
+}
 
+const almacenamiento = {
+    zonas: [],
+    horarios: [],
+    reportes: []
+};
+
+const ADMIN_CREDENTIALS = {
+    usuario: "admin",
+    password: "12345"
+};
+
+const MENSAJES = {
+    CAMPOS_REQUERIDOS: "Por favor, complete todos los campos",
+    ZONA_DUPLICADA: "Error: El nombre de la zona ya existe. Debe ser único.",
+    ZONA_REQUERIDA: "Por favor, seleccione una zona",
+    HORARIO_NO_ENCONTRADO: "Horario no encontrado.",
+    SIN_HORARIOS_ZONA: "No existen horarios disponibles para esta zona",
+    SIN_ZONAS: "No existen zonas disponibles",
+    LOGIN_CORRECTO: "Acceso correcto",
+    LOGIN_INCORRECTO: "Usuario o contraseña incorrectos",
+    REPORTE_REQUERIDO: "Por favor, complete los datos del reporte",
+    SIN_REPORTES: "No existen reportes registrados",
+    ZONA_REGISTRADA: "Zona registrada exitosamente.",
+    HORARIO_REGISTRADO: "Horario registrado exitosamente.",
+    HORARIO_ACTUALIZADO: "Horario actualizado exitosamente.",
+    REPORTE_REGISTRADO: "Reporte registrado correctamente."
+};
+
+function crearRespuestaExitosa(mensaje = "", datos = []) {
     return {
         exito: true,
-        mensaje: "Zona registrada exitosamente."
+        mensaje,
+        datos
     };
+}
+
+function crearRespuestaError(mensaje, datos = []) {
+    return {
+        exito: false,
+        mensaje,
+        datos
+    };
+}
+
+function estaVacio(valor) {
+    return !valor || valor.trim() === "";
+}
+
+function normalizarTexto(texto) {
+    return texto.trim();
+}
+
+function existeZona(nombreZona) {
+    return almacenamiento.zonas.some(function (zona) {
+        return zona.nombre.toLowerCase() === nombreZona.toLowerCase();
+    });
+}
+
+function obtenerIndiceValido(indice, lista) {
+    const indiceConvertido = Number.parseInt(indice, 10);
+
+    if (
+        Number.isNaN(indiceConvertido) ||
+        indiceConvertido < 0 ||
+        indiceConvertido >= lista.length
+    ) {
+        return -1;
+    }
+
+    return indiceConvertido;
+}
+
+export function registrarZona(nombre, barrios) {
+    if (estaVacio(nombre) || estaVacio(barrios)) {
+        return crearRespuestaError(MENSAJES.CAMPOS_REQUERIDOS);
+    }
+
+    const nombreZona = normalizarTexto(nombre);
+    const barriosZona = normalizarTexto(barrios);
+
+    if (existeZona(nombreZona)) {
+        return crearRespuestaError(MENSAJES.ZONA_DUPLICADA);
+    }
+
+    const nuevaZona = new Zona(nombreZona, barriosZona);
+    almacenamiento.zonas.push(nuevaZona);
+
+    return crearRespuestaExitosa(MENSAJES.ZONA_REGISTRADA);
 }
 
 export function registrarHorario(zonaSeleccionada, dias, hora) {
-    if (!zonaSeleccionada || !dias || !hora) {
-        return {
-            exito: false,
-            mensaje: "Por favor, complete todos los campos"
-        };
+    if (estaVacio(zonaSeleccionada) || estaVacio(dias) || estaVacio(hora)) {
+        return crearRespuestaError(MENSAJES.CAMPOS_REQUERIDOS);
     }
 
-    horarios.push({ zona: zonaSeleccionada, dias, hora });
+    const nuevoHorario = new Horario(
+        normalizarTexto(zonaSeleccionada),
+        normalizarTexto(dias),
+        normalizarTexto(hora)
+    );
 
-    return {
-        exito: true,
-        mensaje: "Horario registrado exitosamente."
-    };
+    almacenamiento.horarios.push(nuevoHorario);
+
+    return crearRespuestaExitosa(MENSAJES.HORARIO_REGISTRADO);
 }
 
-export function editarHorario(index, zonaSeleccionada, dias, hora) {
-    if (!zonaSeleccionada || !dias || !hora) {
-        return {
-            exito: false,
-            mensaje: "Por favor, complete todos los campos"
-        };
+export function editarHorario(indice, zonaSeleccionada, dias, hora) {
+    if (estaVacio(zonaSeleccionada) || estaVacio(dias) || estaVacio(hora)) {
+        return crearRespuestaError(MENSAJES.CAMPOS_REQUERIDOS);
     }
 
-    const i = parseInt(index);
+    const indiceHorario = obtenerIndiceValido(indice, almacenamiento.horarios);
 
-    if (isNaN(i) || i < 0 || i >= horarios.length) {
-        return {
-            exito: false,
-            mensaje: "Horario no encontrado."
-        };
+    if (indiceHorario === -1) {
+        return crearRespuestaError(MENSAJES.HORARIO_NO_ENCONTRADO);
     }
 
-    horarios[i].zona = zonaSeleccionada;
-    horarios[i].dias = dias;
-    horarios[i].hora = hora;
+    almacenamiento.horarios[indiceHorario] = new Horario(
+        normalizarTexto(zonaSeleccionada),
+        normalizarTexto(dias),
+        normalizarTexto(hora)
+    );
 
-    return {
-        exito: true,
-        mensaje: "Horario actualizado exitosamente."
-    };
+    return crearRespuestaExitosa(MENSAJES.HORARIO_ACTUALIZADO);
 }
 
 export function obtenerZonas() {
-    return zonas;
+    return [...almacenamiento.zonas];
 }
 
 export function obtenerHorarios() {
-    return horarios;
+    return [...almacenamiento.horarios];
 }
 
 export function obtenerReportes() {
-    return reportes;
+    return [...almacenamiento.reportes];
 }
 
 export function verHorariosPorZona(zonaSeleccionada) {
-    if (!zonaSeleccionada) {
-        return {
-            exito: false,
-            mensaje: "Por favor, seleccione una zona",
-            datos: []
-        };
+    if (estaVacio(zonaSeleccionada)) {
+        return crearRespuestaError(MENSAJES.ZONA_REQUERIDA);
     }
 
-    const horariosZona = horarios.filter(function (h) {
-        return h.zona === zonaSeleccionada;
+    const horariosZona = almacenamiento.horarios.filter(function (horario) {
+        return horario.zona === zonaSeleccionada;
     });
 
     if (horariosZona.length === 0) {
-        return {
-            exito: false,
-            mensaje: "No existen horarios disponibles para esta zona",
-            datos: []
-        };
+        return crearRespuestaError(MENSAJES.SIN_HORARIOS_ZONA);
     }
 
-    return {
-        exito: true,
-        mensaje: "",
-        datos: horariosZona
-    };
+    return crearRespuestaExitosa("", horariosZona);
 }
 
 export function verZonasDisponibles() {
-    if (zonas.length === 0) {
-        return {
-            exito: false,
-            mensaje: "No existen zonas disponibles",
-            datos: []
-        };
+    if (almacenamiento.zonas.length === 0) {
+        return crearRespuestaError(MENSAJES.SIN_ZONAS);
     }
 
-    return {
-        exito: true,
-        mensaje: "",
-        datos: zonas
-    };
+    return crearRespuestaExitosa("", obtenerZonas());
 }
 
-export function validarLogin(admin, password) {
-    if (!admin || !password) {
-        return {
-            exito: false,
-            mensaje: "Por favor, complete todos los campos"
-        };
+export function validarLogin(usuario, password) {
+    if (estaVacio(usuario) || estaVacio(password)) {
+        return crearRespuestaError(MENSAJES.CAMPOS_REQUERIDOS);
     }
 
-    if (admin === ADMIN_USER && password === ADMIN_PASS) {
-        return {
-            exito: true,
-            mensaje: "Acceso correcto"
-        };
+    const credencialesCorrectas =
+        usuario === ADMIN_CREDENTIALS.usuario &&
+        password === ADMIN_CREDENTIALS.password;
+
+    if (!credencialesCorrectas) {
+        return crearRespuestaError(MENSAJES.LOGIN_INCORRECTO);
     }
 
-    return {
-        exito: false,
-        mensaje: "Usuario o contraseña incorrectos"
-    };
+    return crearRespuestaExitosa(MENSAJES.LOGIN_CORRECTO);
 }
 
 export function registrarReporte(zonaSeleccionada, descripcion) {
-    if (!zonaSeleccionada || !descripcion) {
-        return {
-            exito: false,
-            mensaje: "Por favor, complete los datos del reporte"
-        };
+    if (estaVacio(zonaSeleccionada) || estaVacio(descripcion)) {
+        return crearRespuestaError(MENSAJES.REPORTE_REQUERIDO);
     }
 
-    reportes.push({
-        zona: zonaSeleccionada,
-        descripcion: descripcion,
-        fecha: new Date().toLocaleString("es-BO")
-    });
+    const nuevoReporte = new Reporte(
+        normalizarTexto(zonaSeleccionada),
+        normalizarTexto(descripcion)
+    );
 
-    return {
-        exito: true,
-        mensaje: "Reporte registrado correctamente."
-    };
+    almacenamiento.reportes.push(nuevoReporte);
+
+    return crearRespuestaExitosa(MENSAJES.REPORTE_REGISTRADO);
 }
 
 export function verReportesAdmin() {
-    if (reportes.length === 0) {
-        return {
-            exito: false,
-            mensaje: "No existen reportes registrados",
-            datos: []
-        };
+    if (almacenamiento.reportes.length === 0) {
+        return crearRespuestaError(MENSAJES.SIN_REPORTES);
     }
 
-    return {
-        exito: true,
-        mensaje: "",
-        datos: reportes
-    };
+    return crearRespuestaExitosa("", obtenerReportes());
+}
+
+export function reiniciarDatos() {
+    almacenamiento.zonas = [];
+    almacenamiento.horarios = [];
+    almacenamiento.reportes = [];
 }
